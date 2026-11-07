@@ -32,6 +32,8 @@ php artisan serve
 | **المنتجات** | produits, prix / ancien prix, badge, mis en avant, publié, couture/tissu/occasions, **couleurs × tailles × stock** (génération rapide), photos multiples réordonnables |
 | **الأصناف** | catégories par segment (رجال / نساء / أولاد / بنات), accessoires, ordre |
 | **الألوان والخيارات** | couleurs (avec pastille), tissus, types de couture (sfifa, aqqad…), occasions |
+| **الطلبات** | طلبات الزبناء (جديد ← مؤكد ← شحن ← تسليم / ملغى / مرتجع)، واتساب الزبون، طباعة الوصل، تحديث جماعي؛ الإلغاء كيرجّع المخزون |
+| **مقالات الثقافة** | مقالات (عرس، حنّاء، أعياد، رمضان، حرفة، الشمال) بمحرر نص وصورة غلاف، AR/FR |
 | **الإعدادات** | nom, logo, bannière, **numéros WhatsApp**, téléphone, email, **adresses**, horaires, carte, **Facebook / Instagram / TikTok / YouTube / Telegram / Snapchat / Pinterest / X**, textes « à propos » et livraison, Meta Pixel |
 
 ## Structure
@@ -42,10 +44,20 @@ php artisan serve
 - `resources/views` : Blade (layout RTL/LTR, cartes, pages) · `lang/{ar,fr}/shop.php` : traductions
 - `database/seeders` : `BaseSeeder` (listes), `DemoSeeder` (démo)
 
-## Commande par WhatsApp
+## Commande
 
-Chaque fiche produit génère un message WhatsApp prérempli (produit, couleur, taille, prix, lien, « sur mesure ») vers le numéro défini dans les réglages. Paiement à la livraison.
+- **Panier** (session) → **checkout sans compte** (nom, téléphone marocain validé, ville, adresse) → **paiement à la livraison**.
+- Le stock des variantes est vérifié sous verrou puis décrémenté ; annuler/retourner une commande le remet.
+- Page de confirmation avec bouton **WhatsApp** (récapitulatif prérempli vers le numéro du magasin) et événement Meta Pixel `Purchase`.
+- Alternative rapide : bouton « Commander sur WhatsApp » sur chaque fiche produit.
+- Frais de livraison et seuil de livraison gratuite : *الإعدادات ← التوصيل والطلبات*.
 
-## À venir
+## Culture & aide
 
-Panier multi-articles, suivi des commandes, articles « culture marocaine », rapports.
+- `/culture` : articles (7 articles de départ à relire/adapter), liés aux occasions (produits suggérés).
+- `/size-guide` : guide des tailles (valeurs indicatives, à ajuster selon vos coupes).
+- SEO : balises Open Graph, JSON-LD `Product`, `sitemap.xml`.
+
+## Tests
+
+`php artisan test` : pages publiques, filtres, panier/commande/stock, annulation, réglages, culture, accès admin.

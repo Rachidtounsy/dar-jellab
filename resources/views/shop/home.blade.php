@@ -60,5 +60,12 @@
 </section>
 @endif
 
+@if ($articles->isNotEmpty())
+<section class="wrap sec">
+  <div class="sec-h"><h2>{{ t('culture') }}</h2><a href="{{ route('culture') }}">{{ t('view_all') }} ←</a></div>
+  <div class="grid g3">@foreach ($articles as $a)@include('culture.card', ['a' => $a])@endforeach</div>
+</section>
+@endif
+
 <section class="values"><div class="wrap vals">@foreach ([1, 2, 3, 4] as $i)<div><b>{{ t("v{$i}_t") }}</b><span>{{ t("v{$i}_d") }}</span></div>@endforeach</div></section>
 @endsection

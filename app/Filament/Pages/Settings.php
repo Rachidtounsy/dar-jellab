@@ -76,6 +76,12 @@ class Settings extends Page
                         $url('telegram', 'رابط تيليغرام'), $url('snapchat', 'رابط سناب شات'), $url('pinterest', 'رابط بنتريست'), $url('x', 'رابط X (تويتر)'),
                     ]),
                 ]),
+                Tab::make('التوصيل والطلبات')->schema([
+                    Section::make()->columns(2)->schema([
+                        TextInput::make('shipping_fee')->label('ثمن التوصيل (درهم)')->numeric()->minValue(0)->placeholder('0 = مجاني'),
+                        TextInput::make('free_shipping_min')->label('التوصيل مجاني ابتداء من (درهم)')->numeric()->minValue(0)->placeholder('اتركه فارغا لإلغائه'),
+                    ]),
+                ]),
                 Tab::make('المحتوى')->schema([
                     Section::make()->columns(2)->schema([
                         Textarea::make('about_ar')->label('من نحن (عربية)')->rows(4), Textarea::make('about_fr')->label('من نحن (فرنسية)')->rows(4),

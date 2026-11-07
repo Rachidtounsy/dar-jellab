@@ -5,6 +5,13 @@
   $gal = $p->images->isNotEmpty() ? $p->images->map(fn ($i) => ['full' => $i->url, 'th' => $i->url])->all() : [['full' => $p->image, 'th' => $p->image]];
   $desc = $p->localized('desc');
 @endphp
+@push('og')
+<meta property="og:image" content="{{ str_starts_with($p->image, 'http') ? $p->image : url($p->image) }}"><meta property="og:type" content="product">
+@endpush
+@push('head')
+<script type="application/ld+json">{!! json_encode(['@context' => 'https://schema.org', '@type' => 'Product', 'name' => $p->name, 'image' => [$p->image], 'description' => strip_tags($p->localized('desc')) ?: $p->name,
+  'offers' => ['@type' => 'Offer', 'priceCurrency' => 'MAD', 'price' => $p->price, 'availability' => $p->variants->sum('stock') > 0 || $p->made_to_measure ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock', 'url' => url('p/'.$p->slug)]], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>
+@endpush
 @section('content')
 <section class="wrap pad">
   <nav class="crumbs"><a href="{{ url('/') }}">{{ t('home') }}</a> / <a href="{{ url('shop/'.$p->segment) }}">{{ segment_label($p->segment) }}</a> / <a href="{{ url('shop/'.$p->segment.'/'.$p->category->slug) }}">{{ $p->category->name }}</a></nav>
@@ -28,6 +35,10 @@
 
       @if ($p->made_to_measure)<label class="mtm"><input type="checkbox" id="mtm"> <span><b>{{ t('made_to_measure') }}</b> — {{ t('mtm_note') }}</span></label>@endif
 
+      <form id="addform" method="post" action="{{ route('cart.add') }}">@csrf
+        <input type="hidden" name="product_id" value="{{ $p->id }}"><input type="hidden" name="color_id" id="f-color"><input type="hidden" name="size" id="f-size"><input type="hidden" name="mtm" id="f-mtm" value="0">
+        <button class="btn lg" id="addbtn" data-need="{{ $colors->isNotEmpty() ? 1 : 0 }}" @disabled($colors->isNotEmpty())>{{ t('add_to_cart') }}</button>
+      </form>
       <a id="order" class="btn btn-wa lg" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0-7.7 13.6L3 21l4.5-1.2A9 9 0 1 0 12 3Z"/></svg>{{ t('order_wa') }}</a>
       <p class="muted sm">{{ t('cod_note') }}</p>
       <ul class="perks"><li>{{ t('v1_t') }}</li><li>{{ t('v2_t') }}</li><li>{{ t('v3_t') }}</li></ul>

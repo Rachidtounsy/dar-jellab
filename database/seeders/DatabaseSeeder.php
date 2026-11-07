@@ -9,7 +9,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        $this->call(BaseSeeder::class);
+        $this->call([BaseSeeder::class, ArticleSeeder::class]);
 
         // Compte admin (changez ADMIN_EMAIL / ADMIN_PASSWORD dans .env avant le premier seed en production)
         User::firstOrCreate(

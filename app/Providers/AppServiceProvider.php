@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Category;
 use App\Models\Term;
+use App\Support\Cart;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -28,6 +29,7 @@ class AppServiceProvider extends ServiceProvider
             $shared ??= [
                 'navTree' => Category::active()->orderBy('sort')->orderBy('id')->get()->groupBy('segment'),
                 'occasions' => Term::ofType('occasion')->get(),
+                'cartCount' => Cart::count(),
             ];
             $view->with($shared);
         });

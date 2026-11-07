@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Article;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Term;
@@ -23,6 +24,7 @@ class ShopController extends Controller
             'feat' => $feat->isNotEmpty() ? $feat : $base()->sortBy('popular')->limit(8)->get(),
             'new' => $base()->sortBy('new')->limit(8)->get(),
             'sale' => $base()->whereColumn('old_price', '>', 'price')->limit(4)->get(),
+            'articles' => Article::published()->limit(3)->get(),
             'counts' => Product::active()->select('segment', DB::raw('count(*) n'))->groupBy('segment')->pluck('n', 'segment'),
         ]);
     }

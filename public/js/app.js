@@ -8,14 +8,14 @@
   // Page produit : variantes + message WhatsApp
   var pdp = $('#pdp'); if (!pdp) return;
   var colors = JSON.parse($('#cdata').textContent || '[]'), d = pdp.dataset;
-  var cname = $('#cname'), sizes = $('#sizes'), order = $('#order'), mtm = $('#mtm'), cur = 0, size = '';
+  var cname = $('#cname'), sizes = $('#sizes'), order = $('#order'), mtm = $('#mtm'), cur = 0, size = '', fc = $('#f-color'), fs = $('#f-size'), fm = $('#f-mtm'), ab = $('#addbtn');
   function draw() {
     var c = colors[cur]; if (!c) { link(); return; }
     if (cname) cname.textContent = c.name;
-    sizes.innerHTML = ''; size = '';
+    sizes.innerHTML = ''; size = ''; if (fc) fc.value = c.id; if (fs) fs.value = ''; if (ab && ab.dataset.need === '1') ab.disabled = true;
     c.sizes.forEach(function (s) {
       var b = document.createElement('button'); b.type = 'button'; b.textContent = s.size; b.disabled = s.stock <= 0;
-      b.onclick = function () { size = s.size; [].forEach.call(sizes.children, function (x) { x.classList.remove('on'); }); b.classList.add('on'); link(); };
+      b.onclick = function () { size = s.size; if (fs) fs.value = s.size; if (ab) ab.disabled = false; [].forEach.call(sizes.children, function (x) { x.classList.remove('on'); }); b.classList.add('on'); link(); };
       sizes.appendChild(b);
     });
     link();
@@ -30,7 +30,7 @@
     order.href = 'https://wa.me/' + d.wa + '?text=' + encodeURIComponent(lines.join('\n'));
   }
   [].forEach.call(document.querySelectorAll('input[name=col]'), function (r) { r.onchange = function () { cur = +r.value; draw(); }; });
-  if (mtm) mtm.onchange = link;
+  if (mtm) mtm.onchange = function () { if (fm) fm.value = mtm.checked ? '1' : '0'; link(); };
   [].forEach.call(document.querySelectorAll('.gal-th button'), function (b) {
     b.onclick = function () { $('#gmain').src = b.dataset.img; [].forEach.call(document.querySelectorAll('.gal-th button'), function (x) { x.classList.remove('on'); }); b.classList.add('on'); };
   });
