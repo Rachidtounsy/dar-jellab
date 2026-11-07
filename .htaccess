@@ -1,0 +1,13 @@
+Options -Indexes
+RewriteEngine On
+RewriteRule ^(app|database|views|lang|data)(/|$) - [F,L]
+RewriteRule ^(config\.php|config\.sample\.php)$ - [F,L]
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+RewriteRule ^ index.php [L]
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js|woff2|svg|webp|png|jpg)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+</IfModule>

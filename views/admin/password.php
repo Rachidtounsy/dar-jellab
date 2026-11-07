@@ -1,0 +1,1 @@
+<h1>تغيير كلمة المرور</h1><form method="post" class="box form narrow-f"><?= csrf_field() ?><label>كلمة المرور الحالية<input type="password" name="old" required></label><label>الجديدة (8 أحرف على الأقل)<input type="password" name="new" minlength="8" required></label><button class="btn">تغيير</button></form>

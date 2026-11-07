@@ -1,0 +1,2 @@
+<section class="wrap pad narrow"><h1><?= e(t('page_about')) ?></h1><p class="lead"><?= nl2br(e(setting_l('about'))) ?></p>
+<div class="vals in"><div><b><?= e(t('v1_t')) ?></b><span><?= e(t('v1_d')) ?></span></div><div><b><?= e(t('v2_t')) ?></b><span><?= e(t('v2_d')) ?></span></div><div><b><?= e(t('v3_t')) ?></b><span><?= e(t('v3_d')) ?></span></div><div><b><?= e(t('v4_t')) ?></b><span><?= e(t('v4_d')) ?></span></div></div></section>
