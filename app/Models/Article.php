@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Models\Concerns\Localized;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Article extends Model
@@ -56,7 +55,7 @@ class Article extends Model
 
     public function getCoverUrlAttribute(): ?string
     {
-        return $this->cover ? Storage::disk('public')->url($this->cover) : null;
+        return $this->cover ? asset('storage/'.$this->cover) : null;
     }
 
     public function getTopicLabelAttribute(): string

@@ -8,10 +8,12 @@ use App\Models\Product;
 use App\Models\Setting;
 use App\Models\User;
 use App\Models\Variant;
+use App\Support\DemoImages;
 use Database\Seeders\ArticleSeeder;
 use Database\Seeders\BaseSeeder;
 use Database\Seeders\DemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ShopTest extends TestCase
@@ -21,6 +23,7 @@ class ShopTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Storage::fake('public');
         $this->seed(BaseSeeder::class);
         $this->seed(DemoSeeder::class);
         $this->seed(ArticleSeeder::class);
@@ -109,5 +112,14 @@ class ShopTest extends TestCase
         foreach (['/admin', '/admin/orders', '/admin/articles', '/admin/articles/create', '/admin/products/create', '/admin/categories', '/admin/terms'] as $url) {
             $this->actingAs($u)->get($url)->assertOk();
         }
+    }
+
+    public function test_demo_images_are_attached_once(): void
+    {
+        $this->assertSame(0, DemoImages::attach(), 'le seeder a déjà rattaché les images');
+
+        $product = Product::where('name_fr', 'Djellaba femme rose sfifa grise')->firstOrFail();
+        $this->assertStringContainsString('products/demo/women-pink-sfifa.svg', $product->image);
+        Storage::disk('public')->assertExists('products/demo/women-pink-sfifa.svg');
     }
 }

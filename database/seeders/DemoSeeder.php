@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Term;
+use App\Support\DemoImages;
 use Illuminate\Database\Seeder;
 
 /** Produits de démonstration (sans photos : silhouettes colorées). À supprimer avant la mise en ligne. */
@@ -57,5 +58,6 @@ class DemoSeeder extends Seeder
             }
             $p->occasions()->attach(collect($occ)->map(fn ($o) => $T["occasion:$o"])->all());
         }
+        DemoImages::attach();
     }
 }
