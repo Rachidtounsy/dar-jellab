@@ -13,11 +13,11 @@ class DatabaseSeeder extends Seeder
 
         // Compte admin (changez ADMIN_EMAIL / ADMIN_PASSWORD dans .env avant le premier seed en production)
         User::firstOrCreate(
-            ['email' => env('ADMIN_EMAIL', 'admin@darjellaba.ma')],
-            ['name' => 'Admin', 'password' => env('ADMIN_PASSWORD', 'ChangeMe-2026!')],
+            ['email' => config('shop.admin_email')],
+            ['name' => 'Admin', 'password' => config('shop.admin_password')],
         );
 
-        if (app()->environment('local') || env('SEED_DEMO')) {
+        if (app()->environment('local') || config('shop.seed_demo')) {
             $this->call(DemoSeeder::class);
         }
     }

@@ -6,23 +6,27 @@ Boutique en ligne de vêtements traditionnels marocains prêts à porter (djella
 
 ## Installation (local)
 
+Prérequis : PHP ≥ 8.3 (extensions `pdo_sqlite`, `sqlite3`, `mbstring`, `intl`, `fileinfo`, `gd`, `zip`) et Composer.
+
 ```bash
 composer install
-cp .env.example .env && php artisan key:generate
-php artisan migrate --seed        # listes de base + admin + produits de démo (local)
-php artisan storage:link          # images produits (storage/app/public → public/storage)
+composer setup        # .env, clé, base SQLite, migrations + données de base + démo
 php artisan serve
 ```
 
-- Boutique : <http://127.0.0.1:8000>
-- Administration : <http://127.0.0.1:8000/admin> (identifiants : `ADMIN_EMAIL` / `ADMIN_PASSWORD` du `.env`)
+(Équivalent manuel : `copy .env.example .env` · `php artisan key:generate` · créer `database/database.sqlite` · `php artisan migrate --seed`.)
+
+- Boutique : <http://127.0.0.1:8000> · Administration : <http://127.0.0.1:8000/admin> (identifiants `ADMIN_EMAIL` / `ADMIN_PASSWORD` du `.env`)
+- Les images envoyées sont stockées dans `public/storage` : **pas de `storage:link` nécessaire** (fonctionne sur Windows sans droits admin et sur cPanel).
+- Envoi d'images volumineuses : dans `php.ini`, `upload_max_filesize = 20M` et `post_max_size = 25M`.
+- Illustrations de démo sur les produits de démo : `php artisan demo:images`.
 - Tests : `php artisan test`
 
 ## Production (cPanel / VPS)
 
 1. PHP ≥ 8.3, MySQL, Composer. Le *document root* doit pointer sur `public/`.
 2. `.env` : `APP_ENV=production`, `APP_DEBUG=false`, `APP_URL`, `DB_*` (MySQL), `ADMIN_EMAIL`, `ADMIN_PASSWORD`.
-3. `composer install --no-dev -o && php artisan migrate --seed --force && php artisan storage:link && php artisan optimize`.
+3. `composer install --no-dev -o && php artisan migrate --seed --force && php artisan optimize` (les identifiants admin viennent de `config/shop.php` ← `.env`).
 4. Supprimez les produits de démo depuis l'admin avant la mise en ligne (ils ne sont créés qu'en local ou avec `SEED_DEMO=true`).
 
 ## Ce que le propriétaire gère depuis `/admin` (sans toucher au code)

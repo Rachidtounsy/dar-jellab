@@ -122,4 +122,24 @@ class ShopTest extends TestCase
         $this->assertStringContainsString('products/demo/women-pink-sfifa.svg', $product->image);
         Storage::disk('public')->assertExists('products/demo/women-pink-sfifa.svg');
     }
+
+    public function test_admin_order_edit_page_and_print_slip(): void
+    {
+        $v = Variant::where('stock', '>=', 1)->firstOrFail();
+        $order = Order::create(['name' => 'Test', 'phone' => '0612345678', 'city' => 'Tetouan', 'subtotal' => 100, 'shipping' => 0, 'total' => 100]);
+        $order->items()->create(['product_id' => $v->product_id, 'variant_id' => $v->id, 'name' => 'X', 'price' => 100, 'qty' => 1]);
+
+        $this->get('/admin-print/orders/'.$order->id)->assertRedirect();
+        $user = User::factory()->create();
+        $this->actingAs($user)->get('/admin/orders/'.$order->id.'/edit')->assertOk();
+        $this->actingAs($user)->get('/admin-print/orders/'.$order->id)->assertOk()->assertSee($order->number);
+        $this->assertSame('212612345678', $order->wa_phone);
+    }
+
+    public function test_public_files_are_served_from_public_storage_without_symlink(): void
+    {
+        $this->assertSame(public_path('storage'), config('filesystems.disks.public.root'));
+        $this->assertFileExists(public_path('robots.txt'));
+        $this->get('/sitemap.xml')->assertOk()->assertSee('/culture', false);
+    }
 }

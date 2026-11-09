@@ -122,7 +122,9 @@ class ShopController extends Controller
     public function sitemap()
     {
         $urls = collect(['', 'shop', 'sale', 'about', 'contact'])->map(fn ($u) => url($u))
-            ->merge(Product::active()->pluck('slug')->map(fn ($s) => url('p/'.$s)));
+            ->merge([url('culture'), url('size-guide')])
+            ->merge(Product::active()->pluck('slug')->map(fn ($s) => url('p/'.$s)))
+            ->merge(Article::published()->pluck('slug')->map(fn ($s) => url('culture/'.$s)));
         $xml = '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
             .$urls->map(fn ($u) => '<url><loc>'.e($u).'</loc></url>')->implode('').'</urlset>';
 
