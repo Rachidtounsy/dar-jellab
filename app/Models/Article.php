@@ -48,9 +48,14 @@ class Article extends Model
         return $this->localized('excerpt');
     }
 
+    /** Corps HTML nettoyé : balises autorisées uniquement, sans attributs d'événements ni liens javascript:. */
     public function getBodyHtmlAttribute(): string
     {
-        return $this->localized('body');
+        $allowed = '<p><br><h2><h3><h4><ul><ol><li><strong><b><em><i><u><s><a><blockquote><img><figure><figcaption><hr><table><thead><tbody><tr><td><th>';
+        $html = strip_tags($this->localized('body'), $allowed);
+        $html = preg_replace('/\son\w+\s*=\s*("[^"]*"|\'[^\']*\'|[^\s>]+)/i', '', $html);
+
+        return preg_replace('/(href|src)\s*=\s*(["\'])\s*(javascript|data|vbscript):[^"\']*\2/i', '$1=$2#$2', $html);
     }
 
     public function getCoverUrlAttribute(): ?string

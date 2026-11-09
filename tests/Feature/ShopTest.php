@@ -13,6 +13,7 @@ use Database\Seeders\ArticleSeeder;
 use Database\Seeders\BaseSeeder;
 use Database\Seeders\DemoSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
@@ -141,5 +142,26 @@ class ShopTest extends TestCase
         $this->assertSame(public_path('storage'), config('filesystems.disks.public.root'));
         $this->assertFileExists(public_path('robots.txt'));
         $this->get('/sitemap.xml')->assertOk()->assertSee('/culture', false);
+    }
+
+    public function test_article_html_is_sanitised(): void
+    {
+        $a = Article::first();
+        $a->update(['body_ar' => '<p onclick="x()">ok</p><script>alert(1)</script><a href="javascript:alert(1)">bad</a><a href="/size-guide">good</a>']);
+        $html = $a->fresh()->body_html;
+
+        $this->assertStringNotContainsString('<script', $html);
+        $this->assertStringNotContainsString('onclick', $html);
+        $this->assertStringNotContainsString('javascript:', $html);
+        $this->assertStringContainsString('href="/size-guide"', $html);
+    }
+
+    public function test_catalog_queries_do_not_grow_with_the_number_of_products(): void
+    {
+        DB::enableQueryLog();
+        $this->get('/shop')->assertOk();
+        $count = count(DB::getQueryLog());
+
+        $this->assertLessThan(30, $count, "/shop a exécuté $count requêtes");
     }
 }
