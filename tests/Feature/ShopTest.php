@@ -164,4 +164,13 @@ class ShopTest extends TestCase
 
         $this->assertLessThan(30, $count, "/shop a exécuté $count requêtes");
     }
+
+    public function test_demo_images_command_restores_missing_files(): void
+    {
+        Storage::disk('public')->delete('products/demo/men-white-classic.svg');
+
+        $this->artisan('demo:images')->assertSuccessful();
+
+        Storage::disk('public')->assertExists('products/demo/men-white-classic.svg');
+    }
 }

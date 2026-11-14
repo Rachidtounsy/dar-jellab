@@ -2,25 +2,35 @@
 
 Boutique en ligne de vêtements traditionnels marocains prêts à porter (djellabas, caftans, jabadors, daraa, selham, burnous, qachabia, takchita, babouches, tarbouche…) pour **hommes, femmes, garçons et filles**, par occasion (mariage, henné, fêtes, Ramadan).
 
-**Stack :** Laravel 13 · Filament 4 (administration) · Blade · MySQL (SQLite en local) · arabe (RTL) + français.
+**Stack :** Laravel 13 · Filament 4 (administration) · Blade · **MySQL** · arabe (RTL) + français.
 
-## Installation (local)
+## Installation (local) — MySQL
 
-Prérequis : PHP ≥ 8.3 (extensions `pdo_sqlite`, `sqlite3`, `mbstring`, `intl`, `fileinfo`, `gd`, `zip`) et Composer.
+Prérequis : PHP ≥ 8.3 (extensions `pdo_mysql`, `mbstring`, `intl`, `fileinfo`, `gd`, `zip`), Composer et **MySQL 8 / MariaDB** (XAMPP, Laragon, MySQL Installer…).
+
+**Option A — import du dump prêt à l'emploi (recommandé pour tester)**
 
 ```bash
+mysql -u root < database/mysql/dar_jellaba.sql     # crée la base `darjellaba` + tables + données de démo
 composer install
-composer setup        # .env, clé, base SQLite, migrations + données de base + démo
+copy .env.example .env                             # (cp sous Linux/Mac) puis : php artisan key:generate
+php artisan demo:images                            # restaure les illustrations de démo (public/storage)
 php artisan serve
 ```
 
-(Équivalent manuel : `copy .env.example .env` · `php artisan key:generate` · créer `database/database.sqlite` · `php artisan migrate --seed`.)
+**Option B — migrations (base vide)** : créez la base puis `composer setup`
 
-- Boutique : <http://127.0.0.1:8000> · Administration : <http://127.0.0.1:8000/admin> (identifiants `ADMIN_EMAIL` / `ADMIN_PASSWORD` du `.env`)
-- Les images envoyées sont stockées dans `public/storage` : **pas de `storage:link` nécessaire** (fonctionne sur Windows sans droits admin et sur cPanel).
-- Envoi d'images volumineuses : dans `php.ini`, `upload_max_filesize = 20M` et `post_max_size = 25M`.
-- Illustrations de démo sur les produits de démo : `php artisan demo:images`.
-- Tests : `php artisan test`
+```sql
+CREATE DATABASE darjellaba CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+Réglages dans `.env` : `DB_HOST`, `DB_PORT`, `DB_DATABASE=darjellaba`, `DB_USERNAME=root`, `DB_PASSWORD=` (adaptez au mot de passe de votre MySQL).
+
+- Boutique : <http://127.0.0.1:8000> · Administration : <http://127.0.0.1:8000/admin>
+  (compte du dump / seeder : `admin@darjellaba.ma` · `ChangeMe-2026!` — à changer).
+- Images : stockées dans `public/storage`, **pas de `storage:link`** (Windows sans droits admin, cPanel).
+- Envoi d'images : dans `php.ini`, `upload_max_filesize = 20M`, `post_max_size = 25M` et un `upload_tmp_dir` / `sys_temp_dir` **inscriptible** (ex. `C:\php-tmp`).
+- Tests : créez aussi la base `darjellaba_testing`, puis `php artisan test` (MySQL, comme en production).
 
 ## Production (cPanel / VPS)
 

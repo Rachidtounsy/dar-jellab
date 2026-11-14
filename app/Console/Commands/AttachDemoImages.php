@@ -13,7 +13,7 @@ class AttachDemoImages extends Command
 
     public function handle(): int
     {
-        $this->info(DemoImages::attach().' image(s) attached.');
+        $this->info(DemoImages::attach().' change(s) applied (images attached or files restored).');
 
         return self::SUCCESS;
     }
